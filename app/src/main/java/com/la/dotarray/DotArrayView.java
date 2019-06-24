@@ -100,7 +100,7 @@ public class DotArrayView extends View {
             }
         } else {
             for (int row=0;row<rows;row++) {
-                cacheDots[row] = Arrays.copyOf(newDots[row], newDots[row].length);
+                cacheDots[row] = Arrays.copyOf(newDots[row], nowDots[row].length);
             }
         }
         for (int row=0;row<rows;row++) {
@@ -110,20 +110,46 @@ public class DotArrayView extends View {
     }
 
     public void left() {
-
+        boolean[] tomoveDots = new boolean[rows];
+        for (int row=0;row<rows;row++) {
+            tomoveDots[row] = cacheDots[row][0];
+            System.arraycopy(cacheDots[row], 1, cacheDots[row], 0, cacheDots[row].length-1);
+            cacheDots[row][cacheDots[row].length-1] = tomoveDots[row];
+            System.arraycopy(cacheDots[row],0,nowDots[row],0,nowDots[row].length);
+        }
+        invalidate();
     }
 
     public void right() {
-
+        boolean[] tomoveDots = new boolean[rows];
+        for (int row=0;row<rows;row++) {
+            tomoveDots[row] = cacheDots[row][cacheDots[row].length-1];
+            System.arraycopy(cacheDots[row], 0, cacheDots[row], 1, cacheDots[row].length-1);
+            cacheDots[row][0] = tomoveDots[row];
+            System.arraycopy(cacheDots[row],0,nowDots[row],0,nowDots[row].length);
+        }
+        invalidate();
     }
 
     public void up() {
-
+        boolean[] tomoveDots = Arrays.copyOf(nowDots[0], nowDots[0].length);
+        for (int row=0;row<rows-1;row++) {
+            System.arraycopy(nowDots[row+1], 0, nowDots[row], 0, nowDots[row].length);
+        }
+        System.arraycopy(tomoveDots, 0, nowDots[rows-1], 0, nowDots[rows-1].length);
+        invalidate();
     }
 
     public void down() {
-
+        boolean[] tomoveDots = Arrays.copyOf(nowDots[rows-1], nowDots[rows-1].length);
+        for (int row=0;row<rows-1;row++) {
+            System.arraycopy(nowDots[rows-2-row], 0, nowDots[rows-1-row], 0, nowDots[row].length);
+        }
+        System.arraycopy(tomoveDots, 0, nowDots[0], 0, nowDots[0].length);
+        invalidate();
     }
+
+
 
 
 }

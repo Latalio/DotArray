@@ -83,6 +83,25 @@ public class MainActivity extends FragmentActivity {
         boolean[][] p = parsePayload(t);
         mDotArrayView.update(p);
 
+        Thread tt = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int count=0;
+                    while(count<100) {
+                        Thread.sleep(100);
+                        mDotArrayView.down();
+                        count++;
+                    }
+
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        tt.start();
+
+
 //        mDevFrag = new DeviceDialogFragment();
 //        mDevFrag.show(getSupportFragmentManager(), "devfrag");
 
