@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DotArray</string>
+    
+    <string name="scanning">Scanning</string>
+</resources>
