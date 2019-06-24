@@ -46,6 +46,21 @@ public class MainActivity extends FragmentActivity {
     private final String TARGET_DEVICE = "HC-02";
     private final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    boolean[][] parsePayload(byte[] payload) {
+        int num = payload.length / 32;
+        boolean[][] parsed = new boolean[16][num*16];
+        for (int i=0;i<num;i++) {
+            for (int j=0;j<32;j++) {
+                int row = j/2;
+                int col = (j%2==0)?0:8;
+                for (int k=0;k<8;k++) {
+                    parsed[row][i*32+col+k] = (payload[i*32+j] & (0x01<<7-k))>0;
+                }
+            }
+        }
+        return parsed;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,15 +68,20 @@ public class MainActivity extends FragmentActivity {
 
 //        Log.d(TAG, "[1] onCreate");
 //        DisplayMetrics displayMetrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
-//        mDotArrayView = new DotArrayView(this,
-//                displayMetrics.widthPixels, displayMetrics.heightPixels);
+        mDotArrayView = new DotArrayView(this);
         // mLinearLayout = findViewById(R.id.layout);
         // mLinearLayout = new LinearLayout(this);
         // mLinearLayout.addView(mDotArrayView);
 //        setContentView(mDotArrayView);
 //        Log.d(TAG, "[END] onCreate");
         mMainLayout = findViewById(R.id.mainlayout);
+        mMainLayout.addView(mDotArrayView);
+        byte[] t = {(byte)0x81,0x02,0x03,0x04,0x01,0x02,0x03,0x04,
+                0x01,0x02,0x03,0x04,0x01,0x02,0x03,0x04,
+                0x01,0x02,0x03,0x04,0x01,0x02,0x03,0x04,
+                0x01,0x02,0x03,0x04,0x01,0x02,0x03,0x21};
+        boolean[][] p = parsePayload(t);
+        mDotArrayView.update(p);
 
 //        mDevFrag = new DeviceDialogFragment();
 //        mDevFrag.show(getSupportFragmentManager(), "devfrag");
@@ -143,6 +163,8 @@ public class MainActivity extends FragmentActivity {
 //        mDevFrag.addDevAvailable("t1");
 //        mDevFrag.addDevAvailable("t6");
 
+        /**
+
         // 获取适配器
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null) {
@@ -176,6 +198,9 @@ public class MainActivity extends FragmentActivity {
         if (mDevice==null) return;
         ConnectThread connectThread = new ConnectThread(mDevice, MY_UUID);
         connectThread.run();
+    }
+
+         **/
     }
 
 
