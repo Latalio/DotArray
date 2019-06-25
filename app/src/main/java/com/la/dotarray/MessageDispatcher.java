@@ -8,6 +8,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 public class MessageDispatcher extends Thread {
     private final String TAG = MessageDispatcher.class.getSimpleName();
@@ -71,7 +72,13 @@ public class MessageDispatcher extends Thread {
                     //// here not consider the transformation error
                     if (mCheckBuffer.check()) { // send message
                         Message msg = Message.obtain();
-                        msg.what = 0; // msg type
+                        msg.what = mCheckBuffer.buffer[0];
+                        if (msg.what == MessageResponser.MSGTYPE_ORDER) {
+                            msg.arg1 = mCheckBuffer.buffer[1];
+                        } else if(msg.what == MessageResponser.MSGTYPE_PAYLOAD) {
+                            msg.obj = Arrays.copyOfRange(mCheckBuffer.buffer,2,mCheckBuffer.length);
+                        }
+                        mHandler.sendMessage(msg);
                     }
                 }
 //
